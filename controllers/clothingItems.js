@@ -6,7 +6,7 @@ const createItem = (req, res) => {
     return res.status(400).send({ message: "Missing required fields" });
   }
   return clothingItems
-    .create({ name, weather, imageUrl })
+    .create({ name, weather, imageUrl, owner: req.user._id })
     .then((item) => {
       res.status(201).send({ data: item });
     })

@@ -11,6 +11,7 @@ const clothingItem = new mongoose.Schema({
   weather: {
     type: String,
     required: true,
+    enum: ["hot", "warm", "cold"],
   },
   imageUrl: {
     type: String,
@@ -24,6 +25,15 @@ const clothingItem = new mongoose.Schema({
     type: [mongoose.Schema.Types.ObjectId],
     ref: "user",
     default: [],
+  },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "user",
+    required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
 });
 
