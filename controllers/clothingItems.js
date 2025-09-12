@@ -84,7 +84,7 @@ const likeItem = (req, res) => {
       if (err.name === "CastError") {
         return res.status(400).send({ message: "Invalid item ID" });
       }
-      res.status(500).send({ message: "Failed to like item" });
+      return res.status(500).send({ message: "Failed to like item" });
     });
 };
 const unlikeItem = (req, res) => {
@@ -106,7 +106,7 @@ const unlikeItem = (req, res) => {
       if (err.name === "CastError") {
         return res.status(400).send({ message: "Invalid item ID" });
       }
-      res.status(500).send({ message: "Failed to unlike item" });
+      return res.status(500).send({ message: "Failed to unlike item" });
     });
 };
 module.exports = {
