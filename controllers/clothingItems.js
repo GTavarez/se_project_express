@@ -13,7 +13,9 @@ const createItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res.status(400).send({ message: err.message });
+        return res
+          .status(400)
+          .send({ message: "An error has occurred on the server" });
       }
 
       return res.status(500).send({ message: err.message });
@@ -29,7 +31,7 @@ const getItems = (req, res) => {
       res.status(500).send({ message: "Failed to retrieve items" });
     });
 };
-const updateItem = (req, res) => {
+/* const updateItem = (req, res) => {
   const { itemId } = req.params;
   const { imageUrl, name, weather } = req.body;
 
@@ -47,7 +49,7 @@ const updateItem = (req, res) => {
       }
       return res.status(500).send({ message: "Failed to update item" });
     });
-};
+}; */
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
   return clothingItems
