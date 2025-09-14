@@ -1,9 +1,14 @@
 const clothingItems = require("../models/clothingItem");
+const {
+  BAD_REQUEST,
+  NOT_FOUND,
+  INTERNAL_SERVER_ERROR,
+} = require("../utils/errors");
 
 const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
   if (!imageUrl || !name || !weather) {
-    return res.status(400).send({ message: "Missing required fields" });
+    return res.status(BAD_REQUEST).send({ message: "Missing required fields" });
   }
   return clothingItems
     .create({ name, weather, imageUrl, owner: req.user._id })
@@ -14,11 +19,11 @@ const createItem = (req, res) => {
       console.error(err);
       if (err.name === "ValidationError") {
         return res
-          .status(400)
+          .status(BAD_REQUEST)
           .send({ message: "An error has occurred on the server" });
       }
 
-      return res.status(500).send({ message: err.message });
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
     });
 };
 
@@ -28,7 +33,9 @@ const getItems = (req, res) => {
     .then((items) => res.status(200).send({ data: items }))
     .catch((err) => {
       console.error(err);
-      res.status(500).send({ message: "Failed to retrieve items" });
+      res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: "Failed to retrieve items" });
     });
 };
 /* const updateItem = (req, res) => {
@@ -59,12 +66,14 @@ const deleteItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(404).send({ message: "Item not found" });
+        return res.status(NOT_FOUND).send({ message: "Item not found" });
       }
       if (err.name === "CastError") {
-        return res.status(400).send({ message: "Invalid item ID" });
+        return res.status(BAD_REQUEST).send({ message: "Invalid item ID" });
       }
-      return res.status(500).send({ message: "Failed to delete item" });
+      return res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: "Failed to delete item" });
     });
 };
 const likeItem = (req, res) => {
@@ -81,12 +90,14 @@ const likeItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(404).send({ message: "Item not found" });
+        return res.status(NOT_FOUND).send({ message: "Item not found" });
       }
       if (err.name === "CastError") {
-        return res.status(400).send({ message: "Invalid item ID" });
+        return res.status(BAD_REQUEST).send({ message: "Invalid item ID" });
       }
-      return res.status(500).send({ message: "Failed to like item" });
+      return res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: "Failed to like item" });
     });
 };
 const unlikeItem = (req, res) => {
@@ -103,18 +114,19 @@ const unlikeItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(404).send({ message: "Item not found" });
+        return res.status(NOT_FOUND).send({ message: "Item not found" });
       }
       if (err.name === "CastError") {
-        return res.status(400).send({ message: "Invalid item ID" });
+        return res.status(BAD_REQUEST).send({ message: "Invalid item ID" });
       }
-      return res.status(500).send({ message: "Failed to unlike item" });
+      return res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: "Failed to unlike item" });
     });
 };
 module.exports = {
   createItem,
   getItems,
-  updateItem,
   deleteItem,
   likeItem,
   unlikeItem,
