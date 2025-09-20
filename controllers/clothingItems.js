@@ -3,6 +3,7 @@ const {
   BAD_REQUEST,
   NOT_FOUND,
   INTERNAL_SERVER_ERROR,
+  FORBIDDEN,
 } = require("../utils/errors");
 
 const createItem = (req, res) => {
@@ -23,7 +24,9 @@ const createItem = (req, res) => {
           .send({ message: "An error has occurred on the server" });
       }
 
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
+      return res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: "Server Error" });
     });
 };
 
@@ -59,23 +62,47 @@ const getItems = (req, res) => {
 }; */
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
-  return clothingItems
-    .findByIdAndDelete(itemId)
-    .orFail()
-    .then((item) => res.status(200).send({ data: item }))
-    .catch((err) => {
-      console.error(err);
-      if (err.name === "DocumentNotFoundError") {
-        return res.status(NOT_FOUND).send({ message: "Item not found" });
-      }
-      if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid item ID" });
-      }
+  return clothingItems.findById(itemId).then((item) => {
+    // 2. Check if item exists
+    if (!item) {
+      return res.status(NOT_FOUND).send({ message: "Item not found" });
+    }
+
+    // 3. Check if user is logged in
+    if (!req.user || !req.user._id) {
       return res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "Failed to delete item" });
-    });
+        .status(FORBIDDEN)
+        .send({ message: "Forbidden: login required" });
+    }
+
+    // 4. Check if item has an owner and ownership matches
+    if (!item.owner || item.owner.toString() !== req.user._id) {
+      return res
+        .status(FORBIDDEN)
+        .send({ message: "Forbidden: you can only delete your own items" });
+    }
+
+    // 5. Proceed to delete the item
+    return clothingItems
+      .findByIdAndDelete(itemId)
+      .then(() =>
+        res.status(200).send({ message: "Item successfully deleted" })
+      )
+      .catch((err) => {
+        console.error(err);
+        if (err.name === "DocumentNotFoundError") {
+          return res.status(NOT_FOUND).send({ message: "Item not found" });
+        }
+        if (err.name === "CastError") {
+          return res.status(BAD_REQUEST).send({ message: "Invalid item ID" });
+        }
+        return res
+          .status(INTERNAL_SERVER_ERROR)
+          .send({ message: "Failed to delete item" });
+      });
+  });
 };
+
 const likeItem = (req, res) => {
   const { itemId } = req.params;
 
@@ -85,8 +112,10 @@ const likeItem = (req, res) => {
       { $addToSet: { likes: req.user._id } },
       { new: true }
     )
-    .orFail()
-    .then((item) => res.status(200).send({ data: item }))
+    .then((item) => {
+      if (!item) return res.status(404).send({ message: "Item not found" });
+      res.status(200).send({ data: item });
+    })
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
@@ -109,7 +138,6 @@ const unlikeItem = (req, res) => {
       { $pull: { likes: req.user._id } },
       { new: true }
     )
-    .orFail()
     .then((item) => res.status(200).send({ data: item }))
     .catch((err) => {
       console.error(err);
