@@ -1,35 +1,38 @@
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const User = require("../models/user");
+
 const {
   BAD_REQUEST,
   NOT_FOUND,
   INTERNAL_SERVER_ERROR,
 } = require("../utils/errors");
-const jwt = require("jsonwebtoken");
+
 const { JWT_SECRET } = process.env;
-const bcrypt = require("bcryptjs");
 
 const getUsers = (req, res) => {
   User.find({})
-    .then((users) => {
-      const safeUsers = users.map((user) => ({
-        name: user.name,
-        avatar: user.avatar,
-        email: user.email, // include only if route is protected; omit if public
-      }));
-      res.status(200).send({ users: safeUsers });
-    })
+    .then((users) =>
+      res.status(200).send(
+        users.map((user) => ({
+          name: user.name,
+          avatar: user.avatar,
+          email: user.email,
+        }))
+      )
+    )
     .catch((err) => {
       console.error(err);
-      res.status(500).send({ message: "Server error" });
+      return res.status(500).send({ message: "Server error" });
     });
 };
 
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
-  const hashedPassword = bcrypt
+  return bcrypt
     .hash(password, 10)
-    .then((hashedPassword) => {
-      return User.create({
+    .then((hashedPassword) =>
+      User.create({
         name,
         avatar,
         email,
@@ -38,8 +41,9 @@ const createUser = (req, res) => {
         res.status(201).send({
           user: { name: user.name, avatar: user.avatar, email: user.email },
         })
-      );
-    })
+      )
+    )
+
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
@@ -57,11 +61,11 @@ const createUser = (req, res) => {
 
 const getCurrentUser = (req, res) => {
   const { _id: userId } = req.user;
-  User.findById(userId)
+  return User.findById(userId)
     .orFail()
     .then((user) => {
       if (!user) return res.status(404).send({ message: "User not found" });
-      res.status(200).send({
+      return res.status(200).send({
         user: { name: user.name, avatar: user.avatar, email: user.email },
       });
     })
@@ -96,7 +100,7 @@ const login = (req, res) => {
           const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
             expiresIn: "7d",
           });
-          res.status(200).send({
+          return res.status(200).send({
             message: "Login successful",
             token,
             user: { name: user.name, avatar: user.avatar, email: user.email },
@@ -131,14 +135,14 @@ const login = (req, res) => {
 const updateUserProfile = (req, res) => {
   const { name, avatar } = req.body;
 
-  User.findByIdAndUpdate(
+  return User.findByIdAndUpdate(
     req.user._id,
     { name, avatar },
     { new: true, runValidators: true }
   )
     .then((user) => {
       if (!user) return res.status(404).send({ message: "User not found" });
-      res.status(200).send({
+      return res.status(200).send({
         user: { name: user.name, avatar: user.avatar, email: user.email },
       });
     })

@@ -27,7 +27,7 @@ function auth(req, res, next) {
     const payload = jwt.verify(token, JWT_SECRET); // e.g. { _id: "abc123" }
 
     req.user = payload; // attach the payload to req
-    next(); // go to the next middleware/route
+    return next(); // go to the next middleware/route
   } catch (err) {
     return res.status(401).send({ message: "Authorization required" });
   }

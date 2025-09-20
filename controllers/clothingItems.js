@@ -114,7 +114,7 @@ const likeItem = (req, res) => {
     )
     .then((item) => {
       if (!item) return res.status(404).send({ message: "Item not found" });
-      res.status(200).send({ data: item });
+      return res.status(200).send({ data: item });
     })
     .catch((err) => {
       console.error(err);
