@@ -9,7 +9,7 @@ const { PORT = 3001 } = process.env;
 const cors = require("cors");
 
 app.use(cors());
-
+app.use("/", require("./routes/index"));
 const usersRouter = require("./routes/users");
 
 mongoose

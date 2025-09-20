@@ -154,7 +154,7 @@ const updateUserProfile = (req, res) => {
       if (err.name === "ValidationError") {
         return res
           .status(BAD_REQUEST)
-          .send({ message: "Email and password are required" });
+          .send({ message: "name and avatar are required" });
       }
       if (err.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: "Cast Error" });

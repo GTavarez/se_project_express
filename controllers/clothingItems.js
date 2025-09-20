@@ -79,7 +79,16 @@ const deleteItem = (req, res) => {
     if (!item.owner || item.owner.toString() !== req.user._id) {
       return res
         .status(FORBIDDEN)
-        .send({ message: "Forbidden: you can only delete your own items" });
+        .send({ message: "Forbidden: you can only delete your own items" })
+        .catch((err) => {
+          console.error(err);
+          if (err.name === "CastError") {
+            return res.status(BAD_REQUEST).send({ message: "Invalid item ID" });
+          }
+          return res
+            .status(INTERNAL_SERVER_ERROR)
+            .send({ message: "Failed to verify item ownership" });
+        });
     }
 
     // 5. Proceed to delete the item

@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
       message: "You must enter a valid URL",
     },
   },
-  email:{
+  email: {
     type: String,
     required: true,
     unique: true,
@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     select: false, // Prevents the password from being returned in queries by default
-  }
+  },
 });
 
 module.exports = mongoose.model("user", userSchema);
