@@ -9,8 +9,8 @@ const { PORT = 3001 } = process.env;
 const cors = require("cors");
 
 app.use(cors());
+app.use(express.json());
 app.use("/", require("./routes/index"));
-const usersRouter = require("./routes/users");
 
 mongoose
   .connect("mongodb://127.0.0.1:27017/wtwr_db")
@@ -18,10 +18,6 @@ mongoose
     console.log("Connected to DB");
   })
   .catch(console.error);
-
-app.use(express.json());
-
-app.use("/", usersRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);

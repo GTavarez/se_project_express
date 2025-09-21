@@ -68,27 +68,11 @@ const deleteItem = (req, res) => {
       return res.status(NOT_FOUND).send({ message: "Item not found" });
     }
 
-    // 3. Check if user is logged in
-    if (!req.user || !req.user._id) {
-      return res
-        .status(FORBIDDEN)
-        .send({ message: "Forbidden: login required" });
-    }
-
     // 4. Check if item has an owner and ownership matches
     if (!item.owner || item.owner.toString() !== req.user._id) {
       return res
         .status(FORBIDDEN)
-        .send({ message: "Forbidden: you can only delete your own items" })
-        .catch((err) => {
-          console.error(err);
-          if (err.name === "CastError") {
-            return res.status(BAD_REQUEST).send({ message: "Invalid item ID" });
-          }
-          return res
-            .status(INTERNAL_SERVER_ERROR)
-            .send({ message: "Failed to verify item ownership" });
-        });
+        .send({ message: "Forbidden: you can only delete your own items" });
     }
 
     // 5. Proceed to delete the item
@@ -122,7 +106,8 @@ const likeItem = (req, res) => {
       { new: true }
     )
     .then((item) => {
-      if (!item) return res.status(404).send({ message: "Item not found" });
+      if (!item)
+        return res.status(NOT_FOUND).send({ message: "Item not found" });
       return res.status(200).send({ data: item });
     })
     .catch((err) => {
@@ -147,6 +132,7 @@ const unlikeItem = (req, res) => {
       { $pull: { likes: req.user._id } },
       { new: true }
     )
+    .orFail()
     .then((item) => res.status(200).send({ data: item }))
     .catch((err) => {
       console.error(err);
