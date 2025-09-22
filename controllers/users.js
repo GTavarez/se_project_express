@@ -75,40 +75,23 @@ const login = (req, res) => {
       .status(BAD_REQUEST)
       .send({ message: "Email and password are required" });
   }
-  return User.findUserByCredentials({ email })
-    .select("+password")
+  return User.findUserByCredentials(email, password)
     .then((user) => {
-      if (!user)
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
+        expiresIn: "7d",
+      });
+      return res.send({ token });
+    })
+    .catch((err) => {
+      if (err.message === "Invalid credentials") {
         return res
           .status(UNAUTHORIZED)
-          .send({ message: "Invalid credentials" });
-      return bcrypt
-        .compare(password, user.password)
-        .then((isPasswordValid) => {
-          if (!isPasswordValid)
-            return res
-              .status(UNAUTHORIZED)
-              .send({ message: "Invalid credentials" });
-          const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
-            expiresIn: "7d",
-          });
-          return res.status(200).send({
-            message: "Login successful",
-            token,
-            user: { name: user.name, avatar: user.avatar, email: user.email },
-          });
-        })
-        .catch((err) => {
-          if (err.message === "Invalid credentials") {
-            return res
-              .status(UNAUTHORIZED)
-              .send({ message: "Invalid email or password" });
-          }
-          console.error(err);
-          return res
-            .status(INTERNAL_SERVER_ERROR)
-            .send({ message: "Server Error" });
-        });
+          .send({ message: "Invalid email or password" });
+      }
+      console.error(err);
+      return res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: "Server Error" });
     });
 };
 
