@@ -24,7 +24,7 @@ router.get("/me", auth, (req, res) => {
 });
 router.post("/", auth, createItem);
 router.delete("/:itemId", auth, deleteItem);
-router.put("/:itemId/likes", auth, likeItem);
-router.delete("/:itemId/likes", auth, unlikeItem);
+router.put(`/:itemId/likes`, auth, likeItem);
+router.delete(`/:itemId/likes`, auth, unlikeItem);
 
 module.exports = router;

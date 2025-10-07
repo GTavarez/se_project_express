@@ -10,8 +10,9 @@ const createItem = (req, res) => {
   if (!imageUrl || !name || !weather) {
     return res.status(BAD_REQUEST).send({ message: "Missing required fields" });
   }
+  const likes = [];
   return clothingItems
-    .create({ name, weather, imageUrl,likes, owner: req.user._id })
+    .create({ name, weather, imageUrl, likes, owner: req.user._id })
     .then((item) => {
       res.status(201).send({ data: item });
     })

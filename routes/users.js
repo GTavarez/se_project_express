@@ -19,7 +19,9 @@ router.post("/signup", (req, res) => {
     .hash(password, 10)
     .then((hash) =>
       User.create({ email, password: hash, name, avatar }).then((user) => {
+        const token = user.generateAuthToken();
         res.status(201).send({
+          token,
           user: {
             _id: user._id,
             email: user.email,
@@ -54,7 +56,15 @@ router.post("/signin", (req, res) => {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = user.generateAuthToken();
-      res.send({ token, user: { _id: user._id, email: user.email, name: user.name, avatar: user.avatar } });
+      res.send({
+        token,
+        user: {
+          _id: user._id,
+          email: user.email,
+          name: user.name,
+          avatar: user.avatar,
+        },
+      });
     })
     .catch((err) => {
       console.error(err);
