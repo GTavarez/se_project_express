@@ -15,7 +15,7 @@ router.post("/signup", (req, res) => {
   if (!email || !password || !name || !avatar) {
     return res.status(BAD_REQUEST).send({ message: "Missing required fields" });
   }
-  bcrypt
+  return bcrypt
     .hash(password, 10)
     .then((hash) =>
       User.create({ email, password: hash, name, avatar }).then((user) => {
