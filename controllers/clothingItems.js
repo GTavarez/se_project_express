@@ -6,6 +6,8 @@ const {
 } = require("../utils/errors");
 
 const createItem = (req, res) => {
+  console.log(req.body);
+  console.log(req.user);
   const { name, weather, imageUrl } = req.body;
   if (!imageUrl || !name || !weather) {
     return res.status(BAD_REQUEST).send({ message: "Missing required fields" });

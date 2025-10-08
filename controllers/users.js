@@ -24,7 +24,12 @@ const createUser = (req, res) => {
         password: hashedPassword,
       }).then((user) =>
         res.status(201).send({
-          user: { name: user.name, avatar: user.avatar, email: user.email },
+          user: {
+            name: user.name,
+            avatar: user.avatar,
+            email: user.email,
+            _id: user._id,
+          },
         })
       )
     )
@@ -52,7 +57,12 @@ const getCurrentUser = (req, res) => {
     .orFail()
     .then((user) =>
       res.status(200).send({
-        user: { name: user.name, avatar: user.avatar, email: user.email },
+        user: {
+          name: user.name,
+          avatar: user.avatar,
+          email: user.email,
+          _id: user._id,
+        },
       })
     )
     .catch((err) => {
@@ -107,7 +117,12 @@ const updateUserProfile = (req, res) => {
       if (!user)
         return res.status(NOT_FOUND).send({ message: "User not found" });
       return res.status(200).send({
-        user: { name: user.name, avatar: user.avatar, email: user.email },
+        user: {
+          name: user.name,
+          avatar: user.avatar,
+          email: user.email,
+          _id: user._id,
+        },
       });
     })
     .catch((err) => {
