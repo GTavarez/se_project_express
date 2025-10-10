@@ -14,6 +14,7 @@ const { JWT_SECRET } = process.env;
 
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
+
   return bcrypt
     .hash(password, 10)
     .then((hashedPassword) =>
