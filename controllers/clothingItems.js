@@ -1,4 +1,4 @@
-const clothingItems = require("../models/clothingItem");
+const clothingItem = require("../models/clothingItem");
 const {
   BAD_REQUEST,
   NOT_FOUND,
@@ -11,7 +11,7 @@ const createItem = (req, res) => {
     return res.status(BAD_REQUEST).send({ message: "Missing required fields" });
   }
   const likes = [];
-  return clothingItems
+  return clothingItem
     .create({ name, weather, imageUrl, likes, owner: req.user._id })
     .then((item) => {
       res.status(201).send({ data: item });
@@ -31,7 +31,7 @@ const createItem = (req, res) => {
 };
 
 const getItems = (req, res) => {
-  clothingItems
+  clothingItem
     .find({})
     .then((items) => res.status(200).send({ data: items }))
     .catch((err) => {
@@ -44,7 +44,7 @@ const getItems = (req, res) => {
 
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
-  return clothingItems
+  return clothingItem
     .findById(itemId)
     .then((item) => {
       if (!item) {
@@ -73,7 +73,7 @@ const deleteItem = (req, res) => {
 const likeItem = (req, res) => {
   const { itemId } = req.params;
 
-  return clothingItems
+  return clothingItem
     .findByIdAndUpdate(
       itemId,
       { $addToSet: { likes: req.user._id } },
@@ -100,7 +100,7 @@ const likeItem = (req, res) => {
 const unlikeItem = (req, res) => {
   const { itemId } = req.params;
 
-  return clothingItems
+  return clothingItem
     .findByIdAndUpdate(
       itemId,
       { $pull: { likes: req.user._id } },

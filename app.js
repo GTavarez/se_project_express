@@ -8,12 +8,13 @@ const { PORT = 3001 } = process.env;
 
 const cors = require("cors");
 const userRoutes = require("./routes/users");
+const itemsRoutes = require("./routes/clothingItems");
 
 app.use(cors());
 app.use(express.json());
-app.use("/", require("./routes/index"));
 
 app.use("/users", userRoutes);
+app.use("/items", itemsRoutes);
 
 mongoose
   .connect("mongodb://127.0.0.1:27017/wtwr_db")
