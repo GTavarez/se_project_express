@@ -1,4 +1,4 @@
-const JWT_SECRET = process.env.JWT_SECRET || "some-strong-secret-key-123456";
+const { JWT_SECRET } = require("./config");
 
 module.exports = {
   JWT_SECRET,
