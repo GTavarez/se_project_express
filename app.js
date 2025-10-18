@@ -20,6 +20,11 @@ app.use(requestLogger);
 app.use("/users", userRoutes);
 app.use("/", indexRouter);
 app.use("/items", itemsRoutes);
+app.get("/crash-test", () => {
+  setTimeout(() => {
+    throw new Error("Server will crash now");
+  }, 0);
+});
 app.use(errorLogger);
 app.use(errors());
 app.use(errorHandler);
@@ -31,6 +36,6 @@ mongoose
   })
   .catch(console.error);
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server is listening on port ${PORT}`);
 });
