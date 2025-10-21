@@ -57,12 +57,12 @@ module.exports.validateLoginBody = celebrate({
     }),
   }),
 });
-module.exports.validateCardId = celebrate({
+module.exports.validateItemId = celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().hex().length(24).required().messages({
-      "string.length": "Card ID must be 24 characters long",
-      "string.hex": "Card ID must be a valid hexadecimal",
-      "string.empty": "Card ID is required",
+    itemId: Joi.string().hex().length(24).required().messages({
+      "string.length": "Item ID must be 24 characters long",
+      "string.hex": "Item ID must be a valid hexadecimal",
+      "string.empty": "Item ID is required",
     }),
   }),
 });
@@ -75,4 +75,14 @@ module.exports.validateUserId = celebrate({
     }),
   }),
 });
-
+module.exports.validateProfileUpdate = celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().min(2).max(30).messages({
+      "string.min": "Name must be at least 2 characters long",
+      "string.max": "Name must be at most 30 characters long",
+    }),
+    avatar: Joi.string().custom(validateUrl).messages({
+      "any.custom": "Invalid URL format",
+    }),
+  }),
+});

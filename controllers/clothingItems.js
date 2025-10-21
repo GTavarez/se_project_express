@@ -2,6 +2,7 @@ const clothingItem = require("../models/clothingItem");
 
 const BadRequestError = require("../errors/BadRequestError");
 const NotFoundError = require("../errors/NotFoundError");
+const ForbiddenError = require("../errors/ForbiddenError");
 
 const createItem = (req, res, next) => {
   const { name, weather, imageUrl } = req.body;
@@ -41,6 +42,9 @@ const deleteItem = (req, res, next) => {
     .then((item) => {
       if (!item) {
         return next(new NotFoundError("Item not found"));
+      }
+      if (item.owner.toString() !== req.user._id) {
+        return next(new ForbiddenError("You do not have permission to delete this item"));
       }
       // 5. Proceed to delete the item
       return item

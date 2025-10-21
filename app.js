@@ -7,11 +7,11 @@ const mongoose = require("mongoose");
 const { PORT = 3001 } = process.env;
 
 const cors = require("cors");
+const { errors } = require("celebrate");
 const userRoutes = require("./routes/users");
 const itemsRoutes = require("./routes/clothingItems");
 const indexRouter = require("./routes/index");
 const errorHandler = require("./middlewares/error-handler");
-const { errors } = require("celebrate");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
 
 app.use(cors());

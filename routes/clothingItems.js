@@ -7,24 +7,13 @@ const {
   unlikeItem,
 } = require("../controllers/clothingItems");
 const auth = require("../middlewares/auth");
-const clothingItem = require("../models/clothingItem");
-const { INTERNAL_SERVER_ERROR } = require("../utils/errors");
+const { validateItemId, validateCardBody } = require("../middlewares/validate");
 
 router.get("/", getItems);
-router.get("/me", auth, (req, res) => {
-  clothingItem
-    .find({ owner: req.user._id })
-    .then((items) => res.send(items))
-    .catch((err) => {
-      console.error(err);
-      res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "Failed to retrieve user's items" });
-    });
-});
-router.post("/", auth, createItem);
-router.delete("/:itemId", auth, deleteItem);
-router.put(`/:itemId/likes`, auth, likeItem);
-router.delete(`/:itemId/likes`, auth, unlikeItem);
+
+router.post("/", auth, validateCardBody, createItem);
+router.delete("/:itemId", auth, validateItemId, deleteItem);
+router.put(`/:itemId/likes`, auth, validateItemId, likeItem);
+router.delete(`/:itemId/likes`, auth, validateItemId, unlikeItem);
 
 module.exports = router;

@@ -1,16 +1,16 @@
 // the idea behind this auth middleware is to receive the token, verify it, and if it's valid, extract the payload and add it to the request object so that subsequent middlewares or route handlers can access the user information contained in the token. We will purposely run this auth middleware before any route that needs needs to know the currently logged in user's _id
 
 const jwt = require("jsonwebtoken");
-const { UNAUTHORIZED } = require("../utils/errors");
+const UnauthorizedError = require("../errors/UnauthorizedError");
 
 const { JWT_SECRET } = require("../utils/config");
 
-/* function auth(req, res, next) {
+function auth(req, res, next) {
   try {
     const { authorization } = req.headers;
 
     if (!authorization || !authorization.startsWith("Bearer ")) {
-      return res.status(401).send({ message: "Authorization required" });
+      throw new UnauthorizedError('Authorization required');
     }
 
     const token = authorization.replace("Bearer ", "");
@@ -19,10 +19,10 @@ const { JWT_SECRET } = require("../utils/config");
     req.user = payload; // attach the payload to req
     return next(); // go to the next middleware/route
   } catch (err) {
-    return res.status(UNAUTHORIZED).send({ message: "Authorization required" });
+    return next(new UnauthorizedError("Authorization required"));
   }
-} */
-function auth(req, res, next) {
+}
+/* function auth(req, res, next) {
   try {
     console.log('=== AUTH DEBUG ===');
     console.log('Headers received:', req.headers);
@@ -47,6 +47,6 @@ function auth(req, res, next) {
     console.log('❌ JWT verification failed:', err.message);
     return res.status(401).send({ message: "Authorization required" });
   }
-}
+} */
 
 module.exports = auth;
