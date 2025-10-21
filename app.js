@@ -8,8 +8,6 @@ const { PORT = 3001 } = process.env;
 
 const cors = require("cors");
 const { errors } = require("celebrate");
-const userRoutes = require("./routes/users");
-const itemsRoutes = require("./routes/clothingItems");
 const indexRouter = require("./routes/index");
 const errorHandler = require("./middlewares/error-handler");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
@@ -17,14 +15,13 @@ const { requestLogger, errorLogger } = require("./middlewares/logger");
 app.use(cors());
 app.use(express.json());
 app.use(requestLogger);
-app.use("/users", userRoutes);
-app.use("/", indexRouter);
-app.use("/items", itemsRoutes);
 app.get("/crash-test", () => {
   setTimeout(() => {
     throw new Error("Server will crash now");
   }, 0);
 });
+
+app.use("/", indexRouter);
 app.use(errorLogger);
 app.use(errors());
 app.use(errorHandler);
