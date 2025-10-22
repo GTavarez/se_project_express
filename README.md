@@ -18,4 +18,4 @@ Backend (Express): https://github.com/GTavarez/se_project_express
 
 Deployed Application: https://weatherandwear.jumpingcrab.com
 
-Project Pitch Video: https://drive.google.com/file/d/1NgoUgaE0QPb9Bdt5nc4SPuJvggX_oyZI/view?usp=drive_link
+Project Pitch Video: https://docs.google.com/videos/d/1ZBBUa_-YKacPigJt68fN7EK0d6wBN4eV7OUUfj_QePc/edit?usp=sharing
